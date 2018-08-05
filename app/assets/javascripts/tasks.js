@@ -6,7 +6,9 @@ Paloma.controller('StaticPages', {
             // <li> tags
             function taskHtml(task) {
                 var checkedStatus = task.done ? "checked" : "";
-                var liElement = '<li><div class="view"><input class="toggle" type="checkbox"' + 
+                var liClass = task.done ? "completed" : "";
+                var liElement = '<li id="listItem-' + task.id +'" class="' + liClass + '">' +
+                '<div class="view"><input class="toggle" type="checkbox"' + 
                     " data-id='" + task.id + "'" +
                     checkedStatus +
                     '><label>' +
@@ -17,7 +19,7 @@ Paloma.controller('StaticPages', {
             }
     
             // toggleTask takes in a representation of
-            // an even that fires from an a representaion of
+            // an event that fires from an a representaion of
             // the toggle checkbox and performs an API request to toggle
             // the value of the 'done' field
             function toggleTask(e) {
@@ -32,6 +34,11 @@ Paloma.controller('StaticPages', {
                     task: {
                         done: doneValue
                     }
+                }).success(function(data) {
+                    var liHtml = taskHtml(data);
+                    var $li = $("#listItem-" + data.id);
+                    $li.replaceWith(liHtml);
+                    $('.toggle').change(toggleTask);
                 });
             }
     
